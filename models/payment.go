@@ -14,10 +14,11 @@ type Payment struct {
 
 type PaymentDetail struct {
 	ID         int64      `json:"id"`
+	Name       string     `json:"user_name"`
+	Email      string     `json:"email"`
 	Amount     int64      `json:"amount"`
 	TotalPrice float64    `json:"total_price"`
 	CreatedAt  *time.Time `json:"created_at"`
 	UpdatedAt  *time.Time `json:"updated_at"`
 	Product    `json:"product"`
-	User       `json:"user"`
 }

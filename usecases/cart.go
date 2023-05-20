@@ -60,7 +60,7 @@ func (u *cartUC) GetUserCartProducts(ctx context.Context, userID int64) ([]model
 		return nil, err
 	}
 	for index, products := range cartProducts {
-		cartProducts[index].TotalPrice = products.Price * float64(products.Amount)
+		cartProducts[index].TotalPrice = products.ProductPrice * float64(products.Amount)
 	}
 	return cartProducts, nil
 }

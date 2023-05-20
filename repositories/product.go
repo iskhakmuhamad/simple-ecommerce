@@ -32,12 +32,12 @@ func (r *productRepository) GetProducts(ctx context.Context, params *models.Prod
 
 	db := r.qry.Model(models.Product{})
 
-	if params.Category != "" {
-		db = db.Where("category = ?", params.Category)
+	if params.ProductCategory != "" {
+		db = db.Where("product_category = ?", params.ProductCategory)
 	}
-	if params.Name != "" {
-		name := fmt.Sprintf("%%%s%%", params.Name)
-		db = db.Where("name LIKE ?", name)
+	if params.ProductName != "" {
+		name := fmt.Sprintf("%%%s%%", params.ProductName)
+		db = db.Where("product_name LIKE ?", name)
 	}
 
 	if err := db.Find(&products).Error; err != nil {

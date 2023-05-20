@@ -42,7 +42,7 @@ func (u *paymentUC) CreatePayment(ctx context.Context, params payment.AddPayment
 	if product == nil {
 		return errors.New("Product doesnt found, please check again or reload the data")
 	}
-	params.TotalPrice = product.Price * float64(params.Amount)
+	params.TotalPrice = product.ProductPrice * float64(params.Amount)
 
 	err = u.paymentRepo.InsertPayment(ctx, &models.Payment{
 		UserID:     params.UserID,
