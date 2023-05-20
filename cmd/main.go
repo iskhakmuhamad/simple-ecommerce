@@ -11,22 +11,34 @@ import (
 )
 
 var (
-	db      *gorm.DB                    = configs.SetupDatabaseConnection()
-	repo    repositories.UserRepository = repositories.NewUserRepository(db)
-	tokenUC usecases.Token              = usecases.NewTokenUc()
-	authUC  usecases.Auth               = usecases.NewAuthUC(repo)
-	ac      controllers.AuthController  = controllers.NewAuthController(authUC, tokenUC)
+	db          *gorm.DB                       = configs.SetupDatabaseConnection()
+	userRepo    repositories.UserRepository    = repositories.NewUserRepository(db)
+	productRepo repositories.ProductRepository = repositories.NewProductRepository(db)
+
+	tokenUC   usecases.Token   = usecases.NewTokenUc()
+	authUC    usecases.Auth    = usecases.NewAuthUC(userRepo)
+	productUC usecases.Product = usecases.NewProductUC(productRepo)
+
+	authController    controllers.AuthController    = controllers.NewAuthController(authUC, tokenUC)
+	productController controllers.ProductController = controllers.NewProductController(productUC)
 )
 
 func main() {
 
 	r := gin.Default()
 
-	authRoutes := r.Group("api/v1/auth")
+	apiRoutes := r.Group("api/v1/")
 	{
-		authRoutes.POST("/register", ac.Register)
-		authRoutes.POST("/login", ac.Login)
-		authRoutes.POST("/logout", ac.Logout, middleware.AuthorizeJWT(tokenUC))
+		authRoutes := apiRoutes.Group("auth")
+		{
+			authRoutes.POST("/register", authController.Register)
+			authRoutes.POST("/login", authController.Login)
+			authRoutes.POST("/logout", authController.Logout, middleware.AuthorizeJWT(tokenUC))
+		}
+		productRoutes := apiRoutes.Group("products")
+		{
+			productRoutes.GET("/", productController.GetProducts, middleware.AuthorizeJWT(tokenUC))
+		}
 	}
 	r.Run()
 }

@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type repository struct {
+type userRepository struct {
 	qry *gorm.DB
 }
 
@@ -17,12 +17,12 @@ type UserRepository interface {
 }
 
 func NewUserRepository(db *gorm.DB) UserRepository {
-	return &repository{
+	return &userRepository{
 		qry: db,
 	}
 }
 
-func (r *repository) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
+func (r *userRepository) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user *models.User
 
 	if err := r.qry.Model(&user).Where("email = ?", email).First(&user).Error; err != nil {
@@ -32,7 +32,7 @@ func (r *repository) GetUserByEmail(ctx context.Context, email string) (*models.
 	return user, nil
 }
 
-func (r *repository) InsertUser(ctx context.Context, params *models.User) error {
+func (r *userRepository) InsertUser(ctx context.Context, params *models.User) error {
 	var user *models.User
 
 	if err := r.qry.Model(&user).Create(params).Error; err != nil {
