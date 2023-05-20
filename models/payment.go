@@ -11,3 +11,13 @@ type Payment struct {
 	CreatedAt  *time.Time `gorm:"type:timestamp;column:created_at;default:current_timestamp" json:"created_at"`
 	UpdatedAt  *time.Time `gorm:"type:timestamp;column:updated_at" json:"updated_at"`
 }
+
+type PaymentDetail struct {
+	ID         int64      `json:"id"`
+	Amount     int64      `json:"amount"`
+	TotalPrice float64    `json:"total_price"`
+	CreatedAt  *time.Time `json:"created_at"`
+	UpdatedAt  *time.Time `json:"updated_at"`
+	Product    `json:"product"`
+	User       `json:"user"`
+}

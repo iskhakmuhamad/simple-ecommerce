@@ -45,15 +45,16 @@ func main() {
 		{
 			productRoutes.GET("/", productController.GetProducts, middleware.AuthorizeJWT(tokenUC))
 		}
-		cartRoutes := apiRoutes.Group("cart")
+		cartRoutes := apiRoutes.Group("carts")
 		{
 			cartRoutes.POST("/", cartController.CreateCart, middleware.AuthorizeJWT(tokenUC))
 			cartRoutes.GET("/user-cart-produtcs/", cartController.GetUserCartProducts, middleware.AuthorizeJWT(tokenUC))
 			cartRoutes.DELETE("/", cartController.DeleteCartProduct, middleware.AuthorizeJWT(tokenUC))
 		}
-		paymentRoutes := apiRoutes.Group("checkout")
+		paymentRoutes := apiRoutes.Group("payments")
 		{
 			paymentRoutes.POST("/", paymentController.CreatePayment, middleware.AuthorizeJWT(tokenUC))
+			paymentRoutes.GET("/", paymentController.GetUserPayments, middleware.AuthorizeJWT(tokenUC))
 		}
 	}
 	r.Run()

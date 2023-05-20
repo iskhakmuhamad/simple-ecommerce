@@ -17,6 +17,7 @@ type paymentUC struct {
 
 type Payment interface {
 	CreatePayment(ctx context.Context, params payment.AddPaymentRequest) error
+	GetUserPayments(ctx context.Context, userID int64) ([]models.PaymentDetail, error)
 }
 
 func NewPaymentUC(paymentRepo repositories.PaymentRepository,
@@ -59,4 +60,13 @@ func (u *paymentUC) CreatePayment(ctx context.Context, params payment.AddPayment
 	}
 
 	return nil
+}
+
+func (u *paymentUC) GetUserPayments(ctx context.Context, userID int64) ([]models.PaymentDetail, error) {
+	payments, err := u.paymentRepo.GetPaymentByUserID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return payments, nil
 }
