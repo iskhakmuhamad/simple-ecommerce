@@ -15,15 +15,18 @@ var (
 	userRepo    repositories.UserRepository    = repositories.NewUserRepository(db)
 	productRepo repositories.ProductRepository = repositories.NewProductRepository(db)
 	cartRepo    repositories.CartRepository    = repositories.NewCartRepository(db)
+	paymentRepo repositories.PaymentRepository = repositories.NewPaymentRepository(db)
 
 	tokenUC   usecases.Token   = usecases.NewTokenUc()
 	authUC    usecases.Auth    = usecases.NewAuthUC(userRepo)
 	productUC usecases.Product = usecases.NewProductUC(productRepo)
 	cartUC    usecases.Cart    = usecases.NewCartUC(cartRepo, productRepo)
+	paymentUC usecases.Payment = usecases.NewPaymentUC(paymentRepo, productRepo, cartRepo)
 
 	authController    controllers.AuthController    = controllers.NewAuthController(authUC, tokenUC)
 	productController controllers.ProductController = controllers.NewProductController(productUC)
 	cartController    controllers.CartController    = controllers.NewCartController(cartUC, tokenUC)
+	paymentController controllers.PaymentController = controllers.NewPaymentController(paymentUC, tokenUC)
 )
 
 func main() {
@@ -47,6 +50,10 @@ func main() {
 			cartRoutes.POST("/", cartController.CreateCart, middleware.AuthorizeJWT(tokenUC))
 			cartRoutes.GET("/user-cart-produtcs/", cartController.GetUserCartProducts, middleware.AuthorizeJWT(tokenUC))
 			cartRoutes.DELETE("/", cartController.DeleteCartProduct, middleware.AuthorizeJWT(tokenUC))
+		}
+		paymentRoutes := apiRoutes.Group("checkout")
+		{
+			paymentRoutes.POST("/", paymentController.CreatePayment, middleware.AuthorizeJWT(tokenUC))
 		}
 	}
 	r.Run()

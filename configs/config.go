@@ -41,6 +41,7 @@ func SetupDatabaseConnection() *gorm.DB {
 		&models.User{},
 		&models.Product{},
 		&models.Cart{},
+		&models.Payment{},
 	)
 
 	return db
