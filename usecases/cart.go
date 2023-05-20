@@ -16,6 +16,7 @@ type cartUC struct {
 
 type Cart interface {
 	CreateCart(ctx context.Context, params cart.AddCartRequest) error
+	GetUserCartProducts(ctx context.Context, userID int64) ([]models.CartProducts, error)
 }
 
 func NewCartUC(cartRepo repositories.CartRepository, productRepo repositories.ProductRepository) Cart {
@@ -36,7 +37,7 @@ func (u *cartUC) CreateCart(ctx context.Context, params cart.AddCartRequest) err
 		ProductID: params.ProductID,
 		Amount:    params.Amount,
 	}
-	product, err := u.productRepo.GetProductByID(ctx, req.UserID)
+	product, err := u.productRepo.GetProductByID(ctx, req.ProductID)
 	if err != nil {
 		return err
 	}
@@ -50,4 +51,15 @@ func (u *cartUC) CreateCart(ctx context.Context, params cart.AddCartRequest) err
 	}
 
 	return nil
+}
+
+func (u *cartUC) GetUserCartProducts(ctx context.Context, userID int64) ([]models.CartProducts, error) {
+	cartProducts, err := u.cartRepo.GetCartProductsByUserID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	for index, products := range cartProducts {
+		cartProducts[index].TotalPrice = products.Price * float64(products.Amount)
+	}
+	return cartProducts, nil
 }

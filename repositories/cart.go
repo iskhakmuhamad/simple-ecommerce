@@ -14,6 +14,7 @@ type cartRepository struct {
 type CartRepository interface {
 	UpSertCart(ctx context.Context, params *models.Cart) error
 	GetCartbyUserIDnProductID(ctx context.Context, params *models.Cart) (*models.Cart, error)
+	GetCartProductsByUserID(ctx context.Context, userID int64) ([]models.CartProducts, error)
 }
 
 func NewCartRepository(db *gorm.DB) CartRepository {
@@ -40,4 +41,15 @@ func (r *cartRepository) GetCartbyUserIDnProductID(ctx context.Context, params *
 		return nil, err
 	}
 	return cart, nil
+}
+
+func (r *cartRepository) GetCartProductsByUserID(ctx context.Context, userID int64) ([]models.CartProducts, error) {
+	var (
+		carts = []models.CartProducts{}
+	)
+	err := r.qry.Model(&models.Cart{}).Select("*").Joins(" JOIN products ON products.id = carts.product_id").Find(&carts).Error
+	if err != nil {
+		return nil, err
+	}
+	return carts, nil
 }

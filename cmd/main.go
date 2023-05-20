@@ -45,6 +45,7 @@ func main() {
 		cartRoutes := apiRoutes.Group("cart")
 		{
 			cartRoutes.POST("/", cartController.CreateCart, middleware.AuthorizeJWT(tokenUC))
+			cartRoutes.GET("/user-cart-produtcs/", cartController.GetUserCartProducts, middleware.AuthorizeJWT(tokenUC))
 		}
 	}
 	r.Run()
