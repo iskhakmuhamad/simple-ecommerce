@@ -20,6 +20,7 @@ type cartController struct {
 type CartController interface {
 	CreateCart(ctx *gin.Context)
 	GetUserCartProducts(ctx *gin.Context)
+	DeleteCartProduct(ctx *gin.Context)
 }
 
 func NewCartController(cartUc usecases.Cart, tokenUc usecases.Token) CartController {
@@ -95,5 +96,43 @@ func (c *cartController) GetUserCartProducts(ctx *gin.Context) {
 		return
 	}
 	res := shared.BuildResponse("Success Get User Cart Products!", data)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *cartController) DeleteCartProduct(ctx *gin.Context) {
+	var (
+		request cart.DeleteCartRequest
+	)
+
+	err := ctx.Bind(&request)
+	if err != nil {
+		res := shared.BuildErrorResponse("Failed to process request", err.Error())
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+	//get user id from token
+	authHeader := ctx.GetHeader("Authorization")
+	token, err := c.tokenUc.ValidateToken(authHeader)
+	if err != nil {
+		response := shared.BuildErrorResponse("Malformat Token", err.Error())
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		return
+	}
+	claims := token.Claims.(jwt.MapClaims)
+	userId := fmt.Sprintf("%v", claims["id"])
+	request.UserID, err = strconv.ParseInt(userId, 10, 64)
+	if err != nil {
+		response := shared.BuildErrorResponse("Malformat Token", err.Error())
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	err = c.cartUc.DeleteCartProduct(ctx, request)
+	if err != nil {
+		res := shared.BuildErrorResponse("Failed Delete Product From Cart!", err.Error())
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+	res := shared.BuildResponse("Success Delete Product From Cart!", nil)
 	ctx.JSON(http.StatusOK, res)
 }

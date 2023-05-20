@@ -17,6 +17,7 @@ type cartUC struct {
 type Cart interface {
 	CreateCart(ctx context.Context, params cart.AddCartRequest) error
 	GetUserCartProducts(ctx context.Context, userID int64) ([]models.CartProducts, error)
+	DeleteCartProduct(ctx context.Context, params cart.DeleteCartRequest) error
 }
 
 func NewCartUC(cartRepo repositories.CartRepository, productRepo repositories.ProductRepository) Cart {
@@ -62,4 +63,22 @@ func (u *cartUC) GetUserCartProducts(ctx context.Context, userID int64) ([]model
 		cartProducts[index].TotalPrice = products.Price * float64(products.Amount)
 	}
 	return cartProducts, nil
+}
+
+func (u *cartUC) DeleteCartProduct(ctx context.Context, params cart.DeleteCartRequest) error {
+	if err := params.Validate(); err != nil {
+		return err
+	}
+	product, err := u.cartRepo.GetCartbyUserIDnProductID(ctx, params.UserID, params.ProductID)
+	if err != nil {
+		return err
+	}
+	if product == nil {
+		return errors.New("Product doesnt found in your cart, please check again or reload the data")
+	}
+	err = u.cartRepo.DeleteCartProduct(ctx, params.UserID, params.ProductID)
+	if err != nil {
+		return err
+	}
+	return nil
 }

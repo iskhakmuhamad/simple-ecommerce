@@ -46,6 +46,7 @@ func main() {
 		{
 			cartRoutes.POST("/", cartController.CreateCart, middleware.AuthorizeJWT(tokenUC))
 			cartRoutes.GET("/user-cart-produtcs/", cartController.GetUserCartProducts, middleware.AuthorizeJWT(tokenUC))
+			cartRoutes.DELETE("/", cartController.DeleteCartProduct, middleware.AuthorizeJWT(tokenUC))
 		}
 	}
 	r.Run()
