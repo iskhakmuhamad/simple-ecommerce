@@ -2,10 +2,10 @@ package repositories
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/iskhakmuhamad/ecommerce/models"
-	"github.com/iskhakmuhamad/ecommerce/usecases/product"
 
 	"gorm.io/gorm"
 )
@@ -15,7 +15,8 @@ type productRepository struct {
 }
 
 type ProductRepository interface {
-	GetProducts(ctx context.Context, params *product.ProductsRequest) ([]models.Product, error)
+	GetProducts(ctx context.Context, params *models.Product) ([]models.Product, error)
+	GetProductByID(ctx context.Context, id int64) (*models.Product, error)
 }
 
 func NewProductRepository(db *gorm.DB) ProductRepository {
@@ -24,7 +25,7 @@ func NewProductRepository(db *gorm.DB) ProductRepository {
 	}
 }
 
-func (r *productRepository) GetProducts(ctx context.Context, params *product.ProductsRequest) ([]models.Product, error) {
+func (r *productRepository) GetProducts(ctx context.Context, params *models.Product) ([]models.Product, error) {
 	var (
 		products []models.Product
 	)
@@ -38,11 +39,25 @@ func (r *productRepository) GetProducts(ctx context.Context, params *product.Pro
 		name := fmt.Sprintf("%%%s%%", params.Name)
 		db = db.Where("name LIKE ?", name)
 	}
-	fmt.Printf("params: %v\n", params)
 
 	if err := db.Find(&products).Error; err != nil {
 		return nil, err
 	}
 
 	return products, nil
+}
+
+func (r *productRepository) GetProductByID(ctx context.Context, ID int64) (*models.Product, error) {
+	var (
+		product *models.Product
+	)
+
+	if err := r.qry.Model(models.Product{}).Where("id = ?", ID).First(&product).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return product, nil
 }

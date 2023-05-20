@@ -28,7 +28,10 @@ func (u *productUC) GetProducts(ctx context.Context, params product.ProductsRequ
 		return nil, err
 	}
 
-	products, err := u.repo.GetProducts(ctx, &params)
+	products, err := u.repo.GetProducts(ctx, &models.Product{
+		Name:     params.Name,
+		Category: params.Category,
+	})
 
 	if err != nil {
 		return nil, err

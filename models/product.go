@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Product struct {
-	ID        int64     `gorm:"autoIncrement;primaryKey;column:pk" json:"pk"`
+	ID        int64     `gorm:"autoIncrement;primaryKey;column:id" json:"id"`
 	Name      string    `gorm:"type:varchar(255);column:name" json:"name"`
 	Price     float64   `gorm:"type:float;column:price" json:"price"`
 	Qty       int64     `gorm:"type:integer;column:qty" json:"qty"`
