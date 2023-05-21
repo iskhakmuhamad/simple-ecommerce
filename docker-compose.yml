@@ -1,0 +1,22 @@
+version: '3'
+services:
+  postgres_db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres-local
+      POSTGRES_DB: olshop
+    ports:
+      - 5432:5432
+
+  olshop_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    # environment:
+    #   WAIT_HOSTS: postgres_db:5432
+    depends_on:
+      - postgres_db
