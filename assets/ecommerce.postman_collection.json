@@ -104,6 +104,35 @@
 			"name": "products",
 			"item": [
 				{
+					"name": "Create Product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_name\": \"boga sari\",\n    \"product_category\": \"tepung\",\n    \"product_price\": 8000,\n    \"product_qty\": 70\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/products/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"products",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Products",
 					"request": {
 						"method": "GET",
@@ -288,22 +317,22 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					"pm.sendRequest({",
-					"    url: pm.globals.get(\"base_url\")+\"/api/v1/auth/login\",",
-					"    method: 'POST',",
-					"    header: {",
-					"        'content-type': 'application/json'",
-					"    },",
-					"    body: {",
-					"      mode: 'raw',",
-					"        raw: JSON.stringify({ \"email\": pm.globals.get(\"email\"),\"password\": pm.globals.get(\"password\") })",
-					"    }",
-					"},",
-					"    (err, res) => {",
-					"        // Set BEARERTOKEN",
-					"        console.log(res.json());",
-					"        pm.globals.set(\"TOKEN\", res.json().data.token)",
-					"});"
+					"// pm.sendRequest({",
+					"//     url: pm.globals.get(\"base_url\")+\"/api/v1/auth/login\",",
+					"//     method: 'POST',",
+					"//     header: {",
+					"//         'content-type': 'application/json'",
+					"//     },",
+					"//     body: {",
+					"//       mode: 'raw',",
+					"//         raw: JSON.stringify({ \"email\": pm.globals.get(\"email\"),\"password\": pm.globals.get(\"password\") })",
+					"//     }",
+					"// },",
+					"//     (err, res) => {",
+					"//         // Set BEARERTOKEN",
+					"//         console.log(res.json());",
+					"//         pm.globals.set(\"TOKEN\", res.json().data.token)",
+					"// });"
 				]
 			}
 		},
