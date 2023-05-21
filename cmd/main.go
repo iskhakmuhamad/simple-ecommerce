@@ -24,7 +24,7 @@ var (
 	paymentUC usecases.Payment = usecases.NewPaymentUC(paymentRepo, productRepo, cartRepo)
 
 	authController    controllers.AuthController    = controllers.NewAuthController(authUC, tokenUC)
-	productController controllers.ProductController = controllers.NewProductController(productUC)
+	productController controllers.ProductController = controllers.NewProductController(productUC, tokenUC)
 	cartController    controllers.CartController    = controllers.NewCartController(cartUC, tokenUC)
 	paymentController controllers.PaymentController = controllers.NewPaymentController(paymentUC, tokenUC)
 )
@@ -44,6 +44,7 @@ func main() {
 		productRoutes := apiRoutes.Group("products")
 		{
 			productRoutes.GET("/", productController.GetProducts, middleware.AuthorizeJWT(tokenUC))
+			productRoutes.POST("/", productController.CreateProduct, middleware.AuthorizeJWT(tokenUC))
 		}
 		cartRoutes := apiRoutes.Group("carts")
 		{

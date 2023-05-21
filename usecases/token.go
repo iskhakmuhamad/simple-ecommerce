@@ -40,6 +40,7 @@ func (u *jwtService) GenerateToken(ctx context.Context, user *models.User) (*tok
 		ID:    user.ID,
 		Name:  user.Name,
 		Email: user.Email,
+		Role:  user.Role,
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  now.Unix(),
 			ExpiresAt: end.Unix(),

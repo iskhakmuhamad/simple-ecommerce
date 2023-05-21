@@ -14,6 +14,7 @@ type productUC struct {
 
 type Product interface {
 	GetProducts(ctx context.Context, params product.ProductsRequest) ([]models.Product, error)
+	CreateProduct(ctx context.Context, params product.AddProductRequest) error
 }
 
 func NewProductUC(r repositories.ProductRepository) Product {
@@ -38,4 +39,23 @@ func (u *productUC) GetProducts(ctx context.Context, params product.ProductsRequ
 	}
 
 	return products, nil
+}
+func (u *productUC) CreateProduct(ctx context.Context, params product.AddProductRequest) error {
+
+	if err := params.Validate(); err != nil {
+		return err
+	}
+
+	err := u.repo.InsertProduct(ctx, &models.Product{
+		ProductName:     params.ProductName,
+		ProductPrice:    params.ProductPrice,
+		ProductQty:      params.ProductQty,
+		ProductCategory: params.ProductCategory,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

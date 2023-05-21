@@ -15,6 +15,7 @@ type productRepository struct {
 }
 
 type ProductRepository interface {
+	InsertProduct(ctx context.Context, params *models.Product) error
 	GetProducts(ctx context.Context, params *models.Product) ([]models.Product, error)
 	GetProductByID(ctx context.Context, id int64) (*models.Product, error)
 }
@@ -60,4 +61,13 @@ func (r *productRepository) GetProductByID(ctx context.Context, ID int64) (*mode
 	}
 
 	return product, nil
+}
+
+func (r *productRepository) InsertProduct(ctx context.Context, params *models.Product) error {
+	var product *models.Product
+
+	if err := r.qry.Model(&product).Create(params).Error; err != nil {
+		return err
+	}
+	return nil
 }
