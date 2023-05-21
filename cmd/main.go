@@ -7,6 +7,8 @@ import (
 	"github.com/iskhakmuhamad/ecommerce/middleware"
 	"github.com/iskhakmuhamad/ecommerce/repositories"
 	"github.com/iskhakmuhamad/ecommerce/usecases"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 )
 
@@ -58,5 +60,6 @@ func main() {
 			paymentRoutes.GET("/", paymentController.GetUserPayments, middleware.AuthorizeJWT(tokenUC))
 		}
 	}
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.Run()
 }
